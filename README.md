@@ -1,34 +1,73 @@
-import android.animation.ObjectAnimator;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
-
-    private ImageView squareImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        squareImage = findViewById(R.id.square_image);
+        LinearLayout layout = findViewById(R.id.layout);
 
-        Button startButton = findViewById(R.id.start_button);
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startAnimation();
-            }
-        });
+        // Dodanie widoku sześcianu do layoutu
+        CubeView cubeView = new CubeView(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        layout.addView(cubeView, layoutParams);
+    }
+}
+aaaaaa cube
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.view.View;
+
+public class CubeView extends View {
+
+    private Paint paint;
+    private Path path;
+
+    public CubeView(Context context) {
+        super(context);
+        paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        path = new Path();
     }
 
-    private void startAnimation() {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(squareImage, "rotation", 0f, 360f);
-        animator.setDuration(2000); // Ustaw czas trwania animacji w milisekundach
-        animator.setRepeatCount(ObjectAnimator.INFINITE); // Ustaw powtórzenia na nieskończoność
-        animator.start();
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
+
+        int size = 200; // Rozmiar sześcianu
+
+        // Rysowanie sześcianu
+        path.reset();
+        // Górna ściana
+        path.moveTo(centerX - size / 2, centerY - size / 2);
+        path.lineTo(centerX + size / 2, centerY - size / 2);
+        path.lineTo(centerX + size / 4, centerY - size);
+        path.lineTo(centerX - size / 4, centerY - size);
+        path.close();
+        // Boczna ściana
+        path.moveTo(centerX + size / 2, centerY - size / 2);
+        path.lineTo(centerX + size / 4, centerY - size);
+        path.lineTo(centerX + size / 4, centerY + size / 2);
+        path.lineTo(centerX + size / 2, centerY + size / 4);
+        path.close();
+        // Inne ściany analogicznie
+
+        canvas.drawPath(path, paint);
     }
 }
